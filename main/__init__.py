@@ -9,7 +9,6 @@ from sklearn.ensemble import RandomForestRegressor
 def main():
     # drop row that contains NA and metadata columns
     dataset = pd.read_csv('cars_processed_by_unknown.csv')
-    dataset = dataset.dropna(axis=0)
     dataset = dataset.drop(labels=['Unnamed: 0', '링크'], axis=1)
 
     # plot correlation matrix
@@ -19,7 +18,6 @@ def main():
 
     # rank correlation by 가격 feature and get top related features
     price_corr = corr['가격']
-    price_corr = price_corr.dropna()
     price_corr = price_corr[(price_corr > 0.3) | (price_corr < -0.3)]
     price_corr = price_corr.sort_values()
     print(price_corr)
@@ -31,7 +29,12 @@ def main():
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
     # train with random forest regressor
-    model = RandomForestRegressor(random_state=42)
+    model = RandomForestRegressor(n_estimators=325,
+                                  random_state=0,
+                                  max_depth=10,
+                                  min_samples_split=2,
+                                  min_samples_leaf=2,
+                                  max_features=None)
     model.fit(X_train, y_train)
 
     # compute accuracy between prediction y and test y
